@@ -4,41 +4,143 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>번아웃 자가진단 테스트</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>번아웃 자가진단 테스트</h1>
-            <div class="divider"></div>
-            <p class="subtitle">
-                현대인의 마음 건강 체크<br>
-                <span class="highlight">5분</span>만에 완성되는 맞춤형 진단
-            </p>
+        <!-- 메인 페이지 -->
+        <div id="main-page">
+            <div class="header">
+                <h1>번아웃 자가진단 테스트</h1>
+                <div class="divider"></div>
+                <p class="subtitle">
+                    현대인의 마음 건강 체크<br>
+                    <span class="highlight">5분</span>만에 완성되는 맞춤형 진단
+                </p>
+            </div>
+
+            <div class="features">
+                <div class="feature-card">
+                    <h3>Quick & Simple</h3>
+                    <p>15개의 핵심 질문으로<br>당신의 현재 상태를 체크합니다</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Professional Care</h3>
+                    <p>전문가들이 설계한<br>체계적인 분석을 제공합니다</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Personal Solution</h3>
+                    <p>개인 맞춤형 솔루션으로<br>당신의 회복을 돕습니다</p>
+                </div>
+            </div>
+
+            <button onclick="startTest()" class="start-button">테스트 시작하기</button>
+
+            <div class="footer">
+                <p>본 테스트는 전문가의 진단을 대체할 수 없으며,<br>
+                정확한 진단이 필요한 경우 전문가와 상담하시기를 권장드립니다.</p>
+            </div>
         </div>
 
-        <div class="features">
-            <div class="feature-card">
-                <h3>Quick & Simple</h3>
-                <p>15개의 핵심 질문으로<br>당신의 현재 상태를 체크합니다</p>
+        <!-- 테스트 페이지 -->
+        <div id="test-page" style="display: none;">
+            <div class="header">
+                <h2 class="question-number">질문 1/15</h2>
+                <div class="progress-bar">
+                    <div class="progress" style="width: 6.66%"></div>
+                </div>
             </div>
-            <div class="feature-card">
-                <h3>Professional Care</h3>
-                <p>전문가들이 설계한<br>체계적인 분석을 제공합니다</p>
+            
+            <div class="question-container">
+                <h3 id="question-text">극심한 피로감을 느낀다.</h3>
+                
+                <div class="answers">
+                    <button onclick="selectAnswer(1)" class="answer-button">전혀 그렇지 않다</button>
+                    <button onclick="selectAnswer(2)" class="answer-button">가끔 그렇다</button>
+                    <button onclick="selectAnswer(3)" class="answer-button">자주 그렇다</button>
+                    <button onclick="selectAnswer(4)" class="answer-button">매우 자주 그렇다</button>
+                    <button onclick="selectAnswer(5)" class="answer-button">항상 그렇다</button>
+                </div>
             </div>
-            <div class="feature-card">
-                <h3>Personal Solution</h3>
-                <p>개인 맞춤형 솔루션으로<br>당신의 회복을 돕습니다</p>
-            </div>
-        </div>
-
-        <a href="#" class="start-button">시작하기</a>
-
-        <div class="footer">
-            <p>본 테스트는 전문가의 진단을 대체할 수 없으며,<br>
-            정확한 진단이 필요한 경우 전문가와 상담하시기를 권장드립니다.</p>
         </div>
     </div>
-    <script src="assets/js/main.js"></script>
+
+    <script>
+        const questions = [
+            "극심한 피로감을 느낀다",
+            "충분히 잠을 자도 피곤하다",
+            "두통이나 근육통이 자주 있다",
+            "식욕이 변했다 (늘거나 줄었다)",
+            "불면증이 있다",
+            "작은 일에도 짜증이 난다",
+            "일에 대한 열정이 사라졌다",
+            "미래가 불안하고 우울하다",
+            "무기력감을 자주 느낀다",
+            "집중하기 어렵다",
+            "일이나 공부를 미룬다",
+            "사람 만나는 것을 피한다",
+            "취미생활이나 운동을 하지 않는다",
+            "일상적인 결정을 내리기 어렵다",
+            "업무나 학업 성과가 떨어졌다"
+        ];
+
+        let currentQuestion = 0;
+        let scores = [];
+
+        function startTest() {
+            document.getElementById('main-page').style.display = 'none';
+            document.getElementById('test-page').style.display = 'block';
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const questionNumber = currentQuestion + 1;
+            document.querySelector('.question-number').textContent = `질문 ${questionNumber}/15`;
+            document.getElementById('question-text').textContent = questions[currentQuestion];
+            document.querySelector('.progress').style.width = `${(questionNumber/15)*100}%`;
+        }
+
+        function selectAnswer(score) {
+            scores.push(score);
+            
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                showQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            const totalScore = scores.reduce((a, b) => a + b, 0);
+            let result = '';
+            let advice = '';
+
+            if (totalScore <= 30) {
+                result = '정상 범위';
+                advice = '현재 상태를 잘 유지하세요.';
+            } else if (totalScore <= 45) {
+                result = '경미한 번아웃 상태';
+                advice = '충분한 휴식을 취하고 스트레스 관리가 필요합니다.';
+            } else if (totalScore <= 60) {
+                result = '중등도 번아웃 상태';
+                advice = '전문가 상담을 고려해보세요. 업무나 학업의 강도를 조절하는 것이 좋습니다.';
+            } else {
+                result = '심각한 번아웃 상태';
+                advice = '전문가의 도움이 필요합니다. 즉각적인 휴식과 주변의 도움이 필요합니다.';
+            }
+
+            document.getElementById('test-page').innerHTML = `
+                <div class="result-container">
+                    <h2>테스트 결과</h2>
+                    <div class="divider"></div>
+                    <p class="result-score">총점: ${totalScore}점</p>
+                    <p class="result-title">${result}</p>
+                    <p class="result-advice">${advice}</p>
+                    <button onclick="location.reload()" class="start-button">다시 테스트하기</button>
+                </div>
+            `;
+        }
+    </script>
 </body>
 </html>
